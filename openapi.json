@@ -904,6 +904,15 @@
             }
           },
           {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "description": "Filtro por categoria",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "sortBy",
             "required": false,
             "in": "query",
@@ -1175,6 +1184,244 @@
         "summary": "Excluir tarefa (remoção lógica)",
         "tags": [
           "tasks"
+        ]
+      }
+    },
+    "/api/v1/categories": {
+      "post": {
+        "operationId": "CategoriesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Categoria criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Criar nova categoria",
+        "tags": [
+          "categories"
+        ]
+      },
+      "get": {
+        "operationId": "CategoriesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Lista de categorias",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar categorias do usuário",
+        "tags": [
+          "categories"
+        ]
+      }
+    },
+    "/api/v1/categories/{id}": {
+      "put": {
+        "operationId": "CategoriesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Categoria atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Acesso negado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Renomear categoria",
+        "tags": [
+          "categories"
+        ]
+      },
+      "delete": {
+        "operationId": "CategoriesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Categoria excluída com sucesso"
+          },
+          "401": {
+            "description": "Não autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Acesso negado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Excluir categoria (remoção lógica)",
+        "tags": [
+          "categories"
         ]
       }
     }
@@ -1519,6 +1766,10 @@
             "type": "string",
             "description": "Data de entrega limite (ISO 8601)",
             "example": "2026-12-31T23:59:59.000Z"
+          },
+          "categoryId": {
+            "type": "string",
+            "description": "Categoria da tarefa"
           }
         },
         "required": [
@@ -1548,6 +1799,24 @@
           "id",
           "name",
           "email"
+        ]
+      },
+      "TaskCategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identificador da categoria"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome da categoria",
+            "example": "Estudos"
+          }
+        },
+        "required": [
+          "id",
+          "name"
         ]
       },
       "TaskDto": {
@@ -1605,6 +1874,21 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/TaskOwnerDto"
+              }
+            ]
+          },
+          "categoryId": {
+            "type": "string",
+            "description": "Identificador da categoria",
+            "nullable": true
+          },
+          "category": {
+            "description": "Categoria da tarefa",
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TaskCategoryDto"
               }
             ]
           },
@@ -1689,8 +1973,77 @@
           "dueDate": {
             "type": "string",
             "description": "Data de entrega limite (ISO 8601)"
+          },
+          "categoryId": {
+            "type": "string",
+            "description": "Categoria da tarefa (null remove a categoria)",
+            "nullable": true
           }
         }
+      },
+      "CreateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome da categoria",
+            "example": "Estudos",
+            "minLength": 2,
+            "maxLength": 50
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identificador único da categoria",
+            "example": "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome da categoria",
+            "example": "Estudos"
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "Identificador do usuário proprietário"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Data de criação"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Data de última atualização"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "ownerId",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome da categoria",
+            "example": "Estudos",
+            "minLength": 2,
+            "maxLength": 50
+          }
+        },
+        "required": [
+          "name"
+        ]
       }
     }
   }
