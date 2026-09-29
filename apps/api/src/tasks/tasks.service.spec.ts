@@ -50,6 +50,9 @@ describe('TasksService', () => {
         count: vi.fn(),
         update: vi.fn(),
       },
+      category: {
+        findFirst: vi.fn(),
+      },
     };
     service = new TasksService(prisma as unknown as PrismaService);
   });
@@ -68,6 +71,37 @@ describe('TasksService', () => {
       expect(result.id).toBe(mockTask.id);
       expect(result.ownerId).toBe(mockUser.id);
       expect(prisma.task.create).toHaveBeenCalled();
+    });
+
+    it('creates task with a category of the user', async () => {
+      prisma.category.findFirst.mockResolvedValue({ id: 'cat-uuid-1', name: 'Estudos' });
+      prisma.task.create.mockResolvedValue({
+        ...mockTask,
+        categoryId: 'cat-uuid-1',
+        category: { id: 'cat-uuid-1', name: 'Estudos' },
+      });
+
+      const result = await service.create(mockUser.id, {
+        title: 'Estudar Arquitetura BFF',
+        categoryId: 'cat-uuid-1',
+      });
+
+      expect(result.category?.name).toBe('Estudos');
+      expect(prisma.category.findFirst).toHaveBeenCalledWith({
+        where: { id: 'cat-uuid-1', ownerId: mockUser.id, deletedAt: null },
+      });
+    });
+
+    it('rejects category that does not belong to the user', async () => {
+      prisma.category.findFirst.mockResolvedValue(null);
+
+      await expect(
+        service.create(mockUser.id, {
+          title: 'Tarefa com categoria alheia',
+          categoryId: 'cat-de-outro-usuario',
+        }),
+      ).rejects.toThrow(BadRequestException);
+      expect(prisma.task.create).not.toHaveBeenCalled();
     });
 
     it('rejects due date set in the past', async () => {
@@ -197,6 +231,18 @@ describe('TasksService', () => {
       });
 
       expect(result.status).toBe(TaskStatusEnum.PENDING);
+    });
+  });
+
+  describe('update category', () => {
+    it('removes category from task when categoryId is null', async () => {
+      prisma.task.findFirst.mockResolvedValue({ ...mockTask, categoryId: 'cat-uuid-1' });
+      prisma.task.update.mockResolvedValue({ ...mockTask, categoryId: null, category: null });
+
+      const result = await service.update(mockUser, mockTask.id, { categoryId: null });
+
+      expect(result.category).toBeNull();
+      expect(prisma.task.update.mock.calls[0][0].data.categoryId).toBeNull();
     });
   });
 
